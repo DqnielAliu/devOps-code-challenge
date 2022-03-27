@@ -154,3 +154,78 @@ resource "aws_autoscaling_group" "cluster" {
     aws_vpc.main_vpc,
   ]
 }
+
+
+
+/*******************************************************************************
+* AutoScaling Group
+*
+* The autoscaling group that will generate the instances used by the Bastion
+* hosts
+*
+********************************************************************************/
+
+/**
+* This parameter contains the AMI ID for the most recent Amazon Linux 2 ami,
+* managed by AWS.
+*/
+data "aws_ssm_parameter" "linux2_ami" {
+  name = "/aws/service/ami-amazon-linux-latest/amzn-ami-hvm-x86_64-ebs"
+}
+
+/**
+* The public key for the key pair we'll use to ssh into our bastion instance.
+*/
+resource "aws_key_pair" "bastion" {
+  key_name   = "ceros-ski-bastion-key-${var.aws_region}"
+  public_key = file(var.public_key_path)
+}
+
+/**
+* The launch configuration for the autoscaling group that backs our cluster.  
+*/
+resource "aws_launch_configuration" "bastion" {
+  name          = "ceros-ski-${var.environment}-cluster"
+  image_id      = data.aws_ssm_parameter.linux2_ami.value
+  instance_type = "t2.micro"
+  key_name      = aws_key_pair.bastion.key_name
+
+  associate_public_ip_address = true
+  iam_instance_profile        = aws_iam_instance_profile.ecs_agent.name
+  security_groups             = [aws_security_group.autoscaling_group.id]
+}
+
+/**
+* The autoscaling group that backs our bastion hosts.
+*/
+resource "aws_autoscaling_group" "bastion-host" {
+  name             = "ceros-ski-${var.environment}-bastion"
+  min_size         = 1
+  max_size         = 2
+  desired_capacity = 2
+
+  vpc_zone_identifier  = aws_subnet.public_subnet.*.id
+  launch_configuration = aws_launch_configuration.bastion.name
+
+  tag {
+    key                 = "Application"
+    value               = "ceros-ski"
+    propagate_at_launch = true
+  }
+
+  tag {
+    key                 = "Environment"
+    value               = var.environment
+    propagate_at_launch = true
+  }
+
+  tag {
+    key                 = "Resource"
+    value               = "modules.ecs.cluster.aws_autoscaling_group.bastion"
+    propagate_at_launch = true
+  }
+
+  depends_on = [
+    aws_vpc.main_vpc,
+  ]
+}
