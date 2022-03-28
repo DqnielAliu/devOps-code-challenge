@@ -185,7 +185,7 @@ resource "aws_key_pair" "bastion" {
 * The launch configuration for the autoscaling group that backs our cluster.  
 */
 resource "aws_launch_configuration" "bastion" {
-  name          = "ceros-ski-${var.environment}-cluster"
+  name          = "ceros-ski-${var.environment}-bastion"
   image_id      = data.aws_ssm_parameter.linux2_ami.value
   instance_type = "t2.micro"
   key_name      = aws_key_pair.bastion.key_name

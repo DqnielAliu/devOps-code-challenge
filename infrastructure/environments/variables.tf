@@ -16,7 +16,7 @@ variable "aws_region" {
 variable "environment" {
   type        = string
   description = "The name of the environment we'd like to launch."
-  default     = "production"
+  default     = "development"
 }
 
 variable "repository_url" {
@@ -34,10 +34,4 @@ variable "az_count" {
   type        = number
   description = "az_count"
   default     = 2
-}
-
-variable "bucket_ceros" {
-  type        = string
-  description = "The name of the S3 bucket to store the terraform state."
-  default     = "terraform-state-storage-bucket-gkgyfadfadreaf"
 }

@@ -95,9 +95,7 @@ cd infrastructure/repositories
 # Plan the infrastructure by running the following command
 
 terraform plan --var-file terraform.tfvars \
-    -out terraform.tfplan.d/terraform.tfplan \
-    -state terraform.tfstate \
-    -state-out terraform.tfstate
+    -out terraform.tfplan.d/terraform.tfplan
 ```
 
 ```bash
@@ -145,9 +143,7 @@ Update the rest of the variables defined in `terraform.tfvars` file with the cor
 
 ```bash
 terraform plan --var-file terraform.tfvars \
-    -out terraform.tfplan.d/terraform.tfplan \
-    -state terraform.tfstate \
-    -state-out terraform.tfstate
+    -out terraform.tfplan.d/terraform.tfplan
 ```
 
 #### Apply the plan
@@ -158,7 +154,59 @@ terraform apply "terraform.tfplan.d/terraform.tfplan"
 
 After the ECS cluster and its components have been created successfully, the url to access the application on the browser will be outputted in console.
 
+### Remote state
+After applying, create a file `backend.tf` and populate it with the terraform S3 backend.
+
+Example `backend.tf`:
+```bash
+# Terraform backend to store state file remotely
+terraform {
+  backend "s3" {
+    bucket         = "terraform-state-storage-red-robbin"
+    key            = "global/ceros_state/terraform.tfstate"
+    region         = "us-east-2"
+    dynamodb_table = "terraform-state-lock-dynamo-ceros"
+    encrypt        = true
+  }
+}
+```
+
+### Provision Terraform S3 Backend
+Once the `backend.tf` has been created and populated, run:
+```bash
+terraform init -reconfigure
+```
+Follow the prompt, type in yes on the prompt that comes up
+
+Refresh the changes by running 
+```bash
+terraform refresh
+``` 
+on the terminal to verify that the changes have been applied.
+
+Voila!, Remote state with locking is done! Now your state file is in your S3 bucket.
+
 ### Destroy the infrastructure
+
+Remove the backend.tf file
+
+```bash
+rm -rfv backend.tf
+```
+Once the `backend.tf` has been remove/deleted, run:
+```bash
+terraform init -migrate-state -lock=false
+```
+Follow the prompt, type in `yes` on the prompt that comes up
+
+Refresh the changes by running `terraform refresh` on the terminal to verify that the changes have been applied
+```bash
+terraform refresh
+``` 
+
+
+### On the AWS console
+- Empty the bucket.
 
 To destroy the infrastructure, run the command
 
