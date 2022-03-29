@@ -36,7 +36,7 @@ env:
   ECR_REPOSITORY: ceros-ski                             # set this to your Amazon ECR repository name
   ECS_SERVICE: ceros-ski-development-backend            # set this to your Amazon ECS service name
   ECS_CLUSTER: ceros-ski-development                    # set this to your Amazon ECS cluster name
-  ECS_TASK_DEFINITION: ceros-ski-development-backend    # set this to the path to your Amazon ECS task definition
+  ECS_TASK_DEFINITION: task-definition.json             # set this to the path to your Amazon ECS task definition
                                                           # file, e.g. .aws/task-definition.json
   CONTAINER_NAME: ceros-ski                             # set this to the name of the container in the
                                                           # containerDefinitions section of your task definition
@@ -77,7 +77,7 @@ jobs:
 
     - name: Download task definition
       run: |
-        aws ecs describe-task-definition --task-definition ${{ env.ECS_TASK_DEFINITION }} --query taskDefinition > task-definition.json
+        aws ecs describe-task-definition --task-definition ceros-ski-development-backend --query taskDefinition > task-definition.json
 
     - name: Fill in the new image ID in the Amazon ECS task definition
       id: task-def
