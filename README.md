@@ -74,10 +74,10 @@ to impress us, add in one or more of the following.
 - ??? Surprise us with something new and interesting ???
 
 
+========================================================================================
 
-======================================================================================================
 
-# Ceros Devops Code Challenge
+# Ceros Devops Code Challenge Solution
 
 ## Dockerfile
 
@@ -89,7 +89,7 @@ The build command was combined with the tag command. `docker build -t ***.dkr.ec
 The build script `./app/build.sh` can be used in a CI pipeline to automatically build, tag and push the image.
 
 ## Terraform files
-The monolithic `main.tf` terraform files was refactored to more logical file structure for easier maintenance. Application load balancer, EC2, auto-scaling group.
+The monolithic `main.tf` terraform files in the `infrastructure/environment` directory was refactored to more logical file structure for easier maintenance. Application load balancer, EC2, auto-scaling group.
 
 ## Repository
 
@@ -103,8 +103,8 @@ The cluster is made up of the following resources;
 
 - An ECS cluster with configurations, like the task definition, IAM roles and ECS services defined in `main.tf` file.
 
-- Two `bastion hosts` with configurations in two availablity zones for high availability, defined in `infrastructure/environments/ec2.tf`.
-This host is used for SSH access to the ECS instance. 
+- Two `bastion hosts` with configurations in two availablity zones for high availability and an autoscaling group, defined in `infrastructure/environments/autoscaling.tf`.
+This host is used for SSH access to the ECS EC2 instances. 
 
 - `Application loadbalancer` with configs defined in `infrastructure/environments/alb.tf`.
 This is used to expose the url of the application running in the ECS cluster. 
@@ -116,8 +116,12 @@ The cluster VPC has 2 subnets; 2 private and 2 public in 2 different availabilit
 - `AutoScaling group` with configs defined in `infrastructure/environments/autoscaling.tf`.
 This AutoScaling group is defined to have a minimum of 1 instance, 2 desired instances and a maximum of 4 instances.
 
-- `Security groups` are configured for the autoscaling group, the application load balancer and the bastion EC2 instances; with appropriate ingress and egress rules
+- `Security groups` are configured for the autoscaling group, the application load balancer and the bastion EC2 instances; with appropriate ingress and egress rules.
+
+## Remote State Storage
+A terraform S3 backend was added to each of the infrastructure terraform module. This backends are defined in the `backend.tf` files of each terraform module. This is supported by a storage infrastructure defined in the `remote_storage` directory.
+
+The remote state storage consist of:
+- An S3 bucket for terraform backend state storage.
+- A dynamoDB table for state locking.
   
-## Technical Debt
-- The terraform state file could be better secured in an s3 bucket, for security and easy distribution between the team(s).
-- An automated CI/CD pipeline will be very helpful.

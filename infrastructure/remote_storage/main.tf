@@ -26,7 +26,7 @@ resource "aws_s3_bucket_versioning" "storage-versioning" {
   }
 }
 
-# create a dynamodb table for locking the state file
+# create a dynamodb table for state locking
 resource "aws_dynamodb_table" "terraform-state-lock-ceros" {
   name           = "terraform-state-lock-dynamo-ceros"
   hash_key       = "LockID"

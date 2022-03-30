@@ -40,22 +40,9 @@ Before you can build the ECS infrastructure, you'll need to push an initial
 docker image to the ECR repository.  The ECS infrastructure will pull the
 `latest` tag, so you'll want to push that tag to the repository.
 
-From the root project directory.
-```
-# Go to the app directory and build the docker image.
-$ cd app
-
-# Build the docker image.
-$ docker build -t ceros-ski .
-
-# Tag the docker image.
-$ docker tag ceros-ski <repository_url>/ceros-ski:latest
-
-# Login to ECR.  
-$ aws ecr get-login-password --region <region> | docker login --username AWS --password-stdin <repository_url> 
-
-# Push the docker image to ECR.
-$ docker push <repository_url>/ceros-ski:latest
+From the project `app/` directory, configure the `build.sh` with the appropriate variable parameter. Now run the build script.
+```bash
+bash build.sh
 ```
 
 ### Building the ECS Stack
@@ -70,7 +57,7 @@ aws_credentials_file = "~/.aws/credentials"
 aws_profile = "ceros"
 aws_region = "us-east-1"
 repository_url = "<account #>.dkr.ecr.us-east-1.amazonaws.com/ceros-ski"
-public_key_path = "~/.ssh/id_rsa.pub"
+public_key_path = "ceros.pub"
 ```
 
 Once you've initialized the infrastructure and created your .tfvars file, you
@@ -155,23 +142,9 @@ terraform apply "terraform.tfplan.d/terraform.tfplan"
 After the ECS cluster and its components have been created successfully, the url to access the application on the browser will be outputted in console.
 
 ### Remote state
-After applying, create a file `backend.tf` and populate it with the terraform S3 backend.
 
-Example `backend.tf`:
-```bash
-# Terraform backend to store state file remotely
-terraform {
-  backend "s3" {
-    bucket         = "terraform-state-storage-red-robbin"
-    key            = "global/ceros_state/terraform.tfstate"
-    region         = "us-east-2"
-    dynamodb_table = "terraform-state-lock-dynamo-ceros"
-    encrypt        = true
-  }
-}
-```
 
-### Provision Terraform S3 Backend
+### Provision Terraform S3 Backend Storage
 Once the `backend.tf` has been created and populated, run:
 ```bash
 terraform init -reconfigure
@@ -213,3 +186,20 @@ To destroy the infrastructure, run the command
 ```bash
 terraform destroy --var-file terraform.tfvars 
 ```
+
+
+## TERRAFORM RUN ORDER
+* Remote_storage
+  - Sets up s3 bucket and
+  - dynamoDB for terraform backend
+* Repositories
+  - Sets up ECR repository for the docker images that will be created
+    - Now run the docker build script.
+* Environment
+  - Provision ECS cluster,
+  - autoscaling,
+  - security groups,
+  - load balancers
+  - and other infrastructure necessary for the ECS 
+
+Infrastructure is really, only monitoring is left.
