@@ -1,4 +1,4 @@
-FROM node:15 as Build
+FROM node:lts-alpine as Build
 
 # Create work directory => /usr/src/app
 
