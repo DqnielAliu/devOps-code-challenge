@@ -1,4 +1,4 @@
-FROM node:15 as build
+FROM node:15 as Build
 
 # Create work directory => /usr/src/app
 
@@ -24,7 +24,7 @@ FROM nginx:stable-alpine
 ENV APP_HOME=/usr/src/app
 
 # Copy build artifacts to production stage
-COPY --from=build $APP_HOME/dist /usr/share/nginx/html
+COPY --from=Build $APP_HOME/dist /usr/share/nginx/html
 
 # Copy nginx configuration
 COPY ./nginx.conf /etc/nginx/conf.d/default.conf

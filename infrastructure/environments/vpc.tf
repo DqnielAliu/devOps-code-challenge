@@ -13,9 +13,9 @@ resource "aws_vpc" "main_vpc" {
   enable_dns_hostnames = true
 
   tags = {
-    Application = "ceros-ski"
+    Application = "fashion-flux"
     Environment = var.environment
-    Name        = "ceros-ski-${var.environment}-main_vpc"
+    Name        = "fashion-flux-${var.environment}-main_vpc"
     Resource    = "modules.environment.aws_vpc.main_vpc"
   }
 }
@@ -29,9 +29,9 @@ resource "aws_internet_gateway" "main_internet_gateway" {
   vpc_id = aws_vpc.main_vpc.id
 
   tags = {
-    Application = "ceros-ski"
+    Application = "fashion-flux"
     Environment = var.environment
-    Name        = "ceros-ski-${var.environment}-main_internet_gateway"
+    Name        = "fashion-flux-${var.environment}-main_internet_gateway"
     Resource    = "modules.environment.aws_internet_gateway.main_internet_gateway"
   }
 }
@@ -49,9 +49,9 @@ resource "aws_eip" "eip_for_the_nat_gateway" {
   count = var.az_count
 
   tags = {
-    Application = "ceros-ski"
+    Application = "fashion-flux"
     Environment = var.environment
-    Name        = "ceros-ski-${var.environment}-${var.aws_region}-eip_for_the_nat_gateway"
+    Name        = "fashion-flux-${var.environment}-${var.aws_region}-eip_for_the_nat_gateway"
     Resource    = "modules.availability_zone.aws_eip.eip_for_the_nat_gateway"
   }
 
@@ -83,9 +83,9 @@ resource "aws_subnet" "public_subnet" {
   count                   = var.az_count
 
   tags = {
-    Application = "ceros-ski"
+    Application = "fashion-flux"
     Environment = var.environment
-    Name        = "ceros-ski-${var.environment}-${data.aws_availability_zones.available.names[count.index]}-public"
+    Name        = "fashion-flux-${var.environment}-${data.aws_availability_zones.available.names[count.index]}-public"
     Resource    = "modules.availability_zone.aws_subnet.public_subnet"
   }
 }
@@ -101,9 +101,9 @@ resource "aws_nat_gateway" "nat_gateway" {
   count         = var.az_count
 
   tags = {
-    Application = "ceros-ski"
+    Application = "fashion-flux"
     Environment = var.environment
-    Name        = "ceros-ski-${var.environment}-${var.aws_region}"
+    Name        = "fashion-flux-${var.environment}-${var.aws_region}"
     Resource    = "modules.availability_zone.aws_nat_gateway.nat_gateway"
   }
 
@@ -121,9 +121,9 @@ resource "aws_route_table" "public_route_table" {
   count  = var.az_count
 
   tags = {
-    Application = "ceros-ski"
+    Application = "fashion-flux"
     Environment = var.environment
-    Name        = "ceros-ski-${var.environment}-${data.aws_availability_zones.available.names[count.index]}-public"
+    Name        = "fashion-flux-${var.environment}-${data.aws_availability_zones.available.names[count.index]}-public"
     Resource    = "modules.availability_zone.aws_route_table.public_route_table"
   }
 }
@@ -167,9 +167,9 @@ resource "aws_subnet" "private_subnet" {
   cidr_block        = cidrsubnet(aws_vpc.main_vpc.cidr_block, 8, count.index)
 
   tags = {
-    Application = "ceros-ski"
+    Application = "fashion-flux"
     Environment = var.environment
-    Name        = "ceros-ski-${var.environment}-${data.aws_availability_zones.available.names[count.index]}-private"
+    Name        = "fashion-flux-${var.environment}-${data.aws_availability_zones.available.names[count.index]}-private"
     Resource    = "modules.availability_zone.aws_subnet.private_subnet"
   }
 }
@@ -182,9 +182,9 @@ resource "aws_route_table" "private_route_table" {
   count  = var.az_count
 
   tags = {
-    Application = "ceros-ski"
+    Application = "fashion-flux"
     Environment = var.environment
-    Name        = "ceros-ski-${var.environment}-${data.aws_availability_zones.available.names[count.index]}-private"
+    Name        = "fashion-flux-${var.environment}-${data.aws_availability_zones.available.names[count.index]}-private"
     Resource    = "modules.availability_zone.aws_route_table.private_route_table"
   }
 }

@@ -8,10 +8,10 @@
 
 
 resource "aws_ecs_cluster" "cluster" {
-  name = "ceros-ski-${var.environment}"
+  name = "fashion-flux-${var.environment}"
 
   tags = {
-    Application = "ceros-ski"
+    Application = "fashion-flux"
     Environment = var.environment
     Resource    = "modules.ecs.cluster.aws_ecs_cluster.cluster"
   }
@@ -23,18 +23,18 @@ resource "aws_ecs_cluster" "cluster" {
 
 
 /**
-* Create the task definition for the ceros-ski backend, in this case a thin
+* Create the task definition for the fashion-flux backend, in this case a thin
 * wrapper around the container definition.
 */
 resource "aws_ecs_task_definition" "backend" {
-  family       = "ceros-ski-${var.environment}-backend"
+  family       = "fashion-fluxi-${var.environment}-backend"
   network_mode = "bridge"
 
   container_definitions = <<EOF
 [
   {
-    "name": "ceros-ski",
-    "image": "${var.repository_url}/ceros-ski:latest",
+    "name": "fashion-flux",
+    "image": "${var.repository_url}/fashion-flux:latest",
     "environment": [
       {
         "name": "PORT",
@@ -56,9 +56,9 @@ resource "aws_ecs_task_definition" "backend" {
 EOF
 
   tags = {
-    Application = "ceros-ski"
+    Application = "fashion-flux"
     Environment = var.environment
-    Name        = "ceros-ski-${var.environment}-backend"
+    Name        = "fashion-flux-${var.environment}-backend"
     Resource    = "modules.environment.aws_ecs_task_definition.backend"
   }
 }
@@ -80,7 +80,7 @@ data "aws_iam_role" "ecs_service" {
 * constraints on the tasks.
 */
 resource "aws_ecs_service" "backend" {
-  name            = "ceros-ski-${var.environment}-backend"
+  name            = "fashion-flux-${var.environment}-backend"
   cluster         = aws_ecs_cluster.cluster.id
   task_definition = aws_ecs_task_definition.backend.arn
 
@@ -92,20 +92,20 @@ resource "aws_ecs_service" "backend" {
   deployment_minimum_healthy_percent = 50
   deployment_maximum_percent         = 100
   load_balancer {
-    container_name   = "ceros-ski"
+    container_name   = "fashion-flux"
     container_port   = 80
-    target_group_arn = aws_alb_target_group.ceros-ski-tg.arn
+    target_group_arn = aws_alb_target_group.fashion-flux-tg.arn
   }
 
   tags = {
-    Application = "ceros-ski"
+    Application = "fashion-flux"
     Environment = var.environment
     Resource    = "modules.environment.aws_ecs_service.backend"
   }
 
   depends_on = [
     aws_iam_role_policy_attachment.ecs_agent,
-    aws_alb_listener.ceros-ski-listener
+    aws_alb_listener.fashion-flux-listener
   ]
 }
 

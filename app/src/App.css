@@ -1,0 +1,13 @@
+body {
+   font-family: "Fira sans Condensed", sans-serif;
+  padding: 20px 40px;
+}
+
+a {
+  text-decoration: none;
+  color: black;
+}
+
+* {
+  box-sizing: border-box;
+}

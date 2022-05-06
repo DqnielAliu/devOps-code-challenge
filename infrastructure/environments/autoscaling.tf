@@ -21,7 +21,7 @@ data "aws_ssm_parameter" "cluster_ami_id" {
 * The launch configuration for the autoscaling group that backs our cluster.  
 */
 resource "aws_launch_configuration" "cluster" {
-  name                 = "ceros-ski-${var.environment}-cluster"
+  name                 = "fashion-flux-${var.environment}-cluster"
   image_id             = data.aws_ssm_parameter.cluster_ami_id.value
   instance_type        = "t2.micro"
   iam_instance_profile = aws_iam_instance_profile.ecs_agent.name
@@ -38,7 +38,7 @@ EOF
 * The autoscaling group that backs our ECS cluster.
 */
 resource "aws_autoscaling_group" "cluster" {
-  name             = "ceros-ski-${var.environment}-cluster"
+  name             = "fashion-flux-${var.environment}-cluster"
   min_size         = 1
   max_size         = 4
   desired_capacity = 2
@@ -48,7 +48,7 @@ resource "aws_autoscaling_group" "cluster" {
 
   tag {
     key                 = "Application"
-    value               = "ceros-ski"
+    value               = "fashion-flux"
     propagate_at_launch = true
   }
 
@@ -91,7 +91,7 @@ data "aws_ssm_parameter" "linux2_ami" {
 * The public key for the key pair we'll use to ssh into our bastion instance.
 */
 resource "aws_key_pair" "bastion" {
-  key_name   = "ceros-ski-bastion-key-${var.aws_region}"
+  key_name   = "fashion-flux-bastion-key-${var.aws_region}"
   public_key = file(var.public_key_path)
 }
 
@@ -99,7 +99,7 @@ resource "aws_key_pair" "bastion" {
 * The launch configuration for the autoscaling group that backs our cluster.  
 */
 resource "aws_launch_configuration" "bastion" {
-  name          = "ceros-ski-${var.environment}-bastion"
+  name          = "fashion-flux-${var.environment}-bastion"
   image_id      = data.aws_ssm_parameter.linux2_ami.value
   instance_type = "t2.micro"
   key_name      = aws_key_pair.bastion.key_name
@@ -113,7 +113,7 @@ resource "aws_launch_configuration" "bastion" {
 * The autoscaling group that backs our bastion hosts.
 */
 resource "aws_autoscaling_group" "bastion-host" {
-  name             = "ceros-ski-${var.environment}-bastion"
+  name             = "fashion-flux-${var.environment}-bastion"
   min_size         = 1
   max_size         = 2
   desired_capacity = 2
@@ -123,7 +123,7 @@ resource "aws_autoscaling_group" "bastion-host" {
 
   tag {
     key                 = "Application"
-    value               = "ceros-ski"
+    value               = "fashion-flux"
     propagate_at_launch = true
   }
 
