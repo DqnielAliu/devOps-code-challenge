@@ -24,7 +24,7 @@ FROM nginx:stable-alpine
 ENV APP_HOME=/usr/src/app
 
 # Copy build artifacts to production stage
-COPY --from=Build $APP_HOME/dist /usr/share/nginx/html
+COPY --from=Build $APP_HOME/build /usr/share/nginx/html
 
 # Copy nginx configuration
 COPY ./nginx.conf /etc/nginx/conf.d/default.conf
