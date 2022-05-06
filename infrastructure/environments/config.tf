@@ -2,6 +2,7 @@ provider "aws" {
   region                   = var.aws_region
   shared_credentials_files = var.aws_credentials_files
   profile                  = var.aws_profile
+  version                  = ">= 3.7"
 }
 
 terraform {
