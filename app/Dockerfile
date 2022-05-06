@@ -1,4 +1,4 @@
-FROM node:16 as Build
+FROM node:12 as Build
 
 # Create work directory => /usr/src/app
 
