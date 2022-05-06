@@ -142,7 +142,7 @@ terraform apply "terraform.tfplan.d/terraform.tfplan"
 After the ECS cluster and its components have been created successfully, the url to access the application on the browser will be outputted in console.
 
 ### Remote state
-
+Added remote state backend to each terraform infrastructure
 
 ### Provision Terraform S3 Backend Storage
 Once the `backend.tf` has been created and populated, run:
