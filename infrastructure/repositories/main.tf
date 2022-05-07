@@ -9,7 +9,7 @@
 /**
 * The ECR repository we'll push our images to.
 */
-resource "aws_ecr_repository" "fashion_flux" {
-  name                 = "fashion_flux"
+resource "aws_ecr_repository" "fashion-flux" {
+  name                 = "fashion-flux"
   image_tag_mutability = "MUTABLE"
 }
