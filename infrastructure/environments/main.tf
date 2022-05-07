@@ -27,7 +27,7 @@ resource "aws_ecs_cluster" "cluster" {
 * wrapper around the container definition.
 */
 resource "aws_ecs_task_definition" "backend" {
-  family       = "fashion-fluxi-${var.environment}-backend"
+  family       = "fashion-flux-${var.environment}-backend"
   network_mode = "bridge"
 
   container_definitions = <<EOF
