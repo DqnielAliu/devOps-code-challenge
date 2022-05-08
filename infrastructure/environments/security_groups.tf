@@ -6,7 +6,7 @@
 * instances to be deregistered.
 */
 resource "aws_security_group" "autoscaling_group" {
-  name        = "fashion-flux-${var.environment}-autoscaling_group"
+  name        = "${var.app_name}-${var.environment}-autoscaling_group"
   description = "Security Group for the Autoscaling group which provides the instances for the ECS Cluster."
   vpc_id      = aws_vpc.main_vpc.id
 
@@ -26,7 +26,7 @@ resource "aws_security_group" "autoscaling_group" {
   }
 
   tags = {
-    Application = "fashion-flux"
+    Application = "${var.app_name}"
     Environment = var.environment
     Resource    = "modules.ecs.cluster.aws_security_group.autoscaling_group"
   }
@@ -36,7 +36,7 @@ resource "aws_security_group" "autoscaling_group" {
 * A security group for alb.
 */
 resource "aws_security_group" "alb-sg" {
-  name        = "fashion-flux-app-load-balancer-security-group"
+  name        = "${var.app_name}-app-load-balancer-security-group"
   description = "controls access to the ALB"
   vpc_id      = aws_vpc.main_vpc.id
 
@@ -78,7 +78,7 @@ resource "aws_security_group" "bastion" {
   }
 
   tags = {
-    Application = "fashion-flux"
+    Application = "${var.app_name}"
     Environment = var.environment
     Resource    = "modules.availability_zone.aws_security_group.bastion"
   }

@@ -35,3 +35,7 @@ variable "az_count" {
   description = "az_count"
   default     = 2
 }
+variable "app_name" {
+  type        = string
+  description = "The name of the project we'll launch on infrastructure."
+}

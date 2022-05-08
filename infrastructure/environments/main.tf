@@ -8,10 +8,10 @@
 
 
 resource "aws_ecs_cluster" "cluster" {
-  name = "fashion-flux-${var.environment}"
+  name = "${var.app_name}-${var.environment}"
 
   tags = {
-    Application = "fashion-flux"
+    Application = "${var.app_name}"
     Environment = var.environment
     Resource    = "modules.ecs.cluster.aws_ecs_cluster.cluster"
   }
@@ -23,18 +23,18 @@ resource "aws_ecs_cluster" "cluster" {
 
 
 /**
-* Create the task definition for the fashion-flux backend, in this case a thin
+* Create the task definition for the app backend, in this case a thin
 * wrapper around the container definition.
 */
 resource "aws_ecs_task_definition" "backend" {
-  family       = "fashion-flux-${var.environment}-backend"
+  family       = "${var.app_name}-${var.environment}-backend"
   network_mode = "bridge"
 
   container_definitions = <<EOF
 [
   {
-    "name": "fashion-flux",
-    "image": "${var.repository_url}/fashion-flux:latest",
+    "name": "${var.app_name}",
+    "image": "${var.repository_url}/${var.app_name}:latest",
     "environment": [
       {
         "name": "PORT",
@@ -56,9 +56,9 @@ resource "aws_ecs_task_definition" "backend" {
 EOF
 
   tags = {
-    Application = "fashion-flux"
+    Application = "${var.app_name}"
     Environment = var.environment
-    Name        = "fashion-flux-${var.environment}-backend"
+    Name        = "${var.app_name}-${var.environment}-backend"
     Resource    = "modules.environment.aws_ecs_task_definition.backend"
   }
 }
@@ -80,7 +80,7 @@ data "aws_iam_role" "ecs_service" {
 * constraints on the tasks.
 */
 resource "aws_ecs_service" "backend" {
-  name            = "fashion-flux-${var.environment}-backend"
+  name            = "${var.app_name}-${var.environment}-backend"
   cluster         = aws_ecs_cluster.cluster.id
   task_definition = aws_ecs_task_definition.backend.arn
 
@@ -92,20 +92,20 @@ resource "aws_ecs_service" "backend" {
   deployment_minimum_healthy_percent = 50
   deployment_maximum_percent         = 100
   load_balancer {
-    container_name   = "fashion-flux"
+    container_name   = var.app_name
     container_port   = 80
-    target_group_arn = aws_alb_target_group.fashion-flux-tg.arn
+    target_group_arn = aws_alb_target_group.fashion_flux_tg.arn
   }
 
   tags = {
-    Application = "fashion-flux"
+    Application = "${var.app_name}"
     Environment = var.environment
     Resource    = "modules.environment.aws_ecs_service.backend"
   }
 
   depends_on = [
     aws_iam_role_policy_attachment.ecs_agent,
-    aws_alb_listener.fashion-flux-listener
+    aws_alb_listener.fashion_flux_listener
   ]
 }
 

@@ -33,7 +33,7 @@ data "aws_iam_policy_document" "ecs_agent" {
 * The policy resource itself.  Uses the policy document defined above.
 */
 resource "aws_iam_policy" "ecs_agent" {
-  name        = "fashion-flux-ecs-agent-policy"
+  name        = "${var.app_name}-ecs-agent-policy"
   path        = "/"
   description = "Access policy for the EC2 instances backing the ECS cluster."
 
@@ -61,7 +61,7 @@ data "aws_iam_policy_document" "ecs_agent_assume_role_policy" {
 * The IAM role that will be used by the instances that back the ECS Cluster.
 */
 resource "aws_iam_role" "ecs_agent" {
-  name = "fashion-flux-ecs-agent"
+  name = "${var.app_name}-ecs-agent"
   path = "/"
 
   assume_role_policy = data.aws_iam_policy_document.ecs_agent_assume_role_policy.json
@@ -81,6 +81,6 @@ resource "aws_iam_role_policy_attachment" "ecs_agent" {
 * defining with the launch configuration.
 */
 resource "aws_iam_instance_profile" "ecs_agent" {
-  name = "fashion-flux-ecs-agent"
+  name = "${var.app_name}-ecs-agent"
   role = aws_iam_role.ecs_agent.name
 }

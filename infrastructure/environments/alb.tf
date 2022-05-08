@@ -1,11 +1,11 @@
 resource "aws_alb" "alb" {
-  name            = "fashion-flux-alb"
+  name            = "${var.app_name}-alb"
   subnets         = aws_subnet.public_subnet.*.id
   security_groups = [aws_security_group.alb-sg.id]
 }
 
-resource "aws_alb_target_group" "fashion-flux-tg" {
-  name        = "fashion-flux-tg"
+resource "aws_alb_target_group" "fashion_flux_tg" {
+  name        = "${var.app_name}-tg"
   port        = 80
   protocol    = "HTTP"
   target_type = "instance"
@@ -23,12 +23,12 @@ resource "aws_alb_target_group" "fashion-flux-tg" {
 }
 
 #redirecting all incomming traffic from ALB to the target group
-resource "aws_alb_listener" "fashion-flux-listener" {
+resource "aws_alb_listener" "fashion_flux_listener" {
   load_balancer_arn = aws_alb.alb.id
   port              = 80
   protocol          = "HTTP"
   default_action {
     type             = "forward"
-    target_group_arn = aws_alb_target_group.fashion-flux-tg.arn
+    target_group_arn = aws_alb_target_group.fashion_flux_tg.arn
   }
 }
