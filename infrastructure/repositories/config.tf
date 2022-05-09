@@ -7,6 +7,12 @@ provider "aws" {
 terraform {
   required_version = ">= 0.14.4"
 
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = ">= 3.7"
+    }
+  }
   backend "s3" {
     bucket         = "terraform-state-storage-bucket-ceros-ski-app-backend"
     key            = "global/fashion-flux-state/repositories/terraform.tfstate"
